@@ -1,0 +1,11 @@
+.idea/
+# Ignore environment files containing secrets
+*.env
+.env
+
+# Python bytecode
+__pycache__/
+.messing_around/
+
+.venv/
+.idea/
