@@ -1,6 +1,4 @@
 # typical setup : C:\Users\phong\Pictures\tools.png
-import sys
-
 all_tools = [
     {
         'type': 'function',

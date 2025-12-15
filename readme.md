@@ -1,16 +1,16 @@
-# 🚀 How to Run the Shopping Assistant Project
+# 🚀 How to Run the Shopping Assistant
 
-This guide will help you run both the backend and frontend of your Shopping Assistant application.
+This guide is created by **<u>AI</u>** and refined by me so if you have a hardtime understanding then ask AI to do it for you.
 
 ## 📋 Prerequisites
 
 Before running the project, ensure you have:
 
-- **Python 3.8+** installed
+- **Python 3.11+** installed
 - **Node.js 18+** and **npm** installed
 - **Git** (if cloning from repository)
 
-## 🔧 Initial Setup (First Time Only)
+## 🔧 Setup
 
 ### 1. Install Backend Dependencies
 
@@ -36,36 +36,40 @@ cd ..
 
 ### 3. Configure Environment Variables
 
-Create a `.env` file in the project root and add your credentials:
+Create a `.env` file in the project root nessasary credentials are in **.env_example.txt:**
 
 ```bash
-# Copy the example file
-copy .env.example .env
+Please read the .env_example.txt file
+Then create a .env file
 ```
 
-Then edit `.env` with your actual credentials:
+If you are too lazy then here is what the `.env` looks like:
 
-```env
-# OpenRouter API (Required for AI features)
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+```bash
+# OpenRouter API Key
+API=sk-or-v1-something
 
-# Supabase Database (Required for data storage)
-SUPABASE_URL=your_supabase_project_url
-SUPABASE_KEY=your_supabase_anon_key
+# Supabase Configuration
+SUPABASE_URL=https://perhaps?.supabase.co
+SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9?????
+SUPABASE_CONTROL_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9????  (This is the anon secret key)
 
-# Optional: Custom OpenRouter Base URL
-OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+# Supabase Auth (optional)
+EMAIL=Meomeosir@gmail.com
+PASSWORD=yeah_right
 ```
+
+**Note that**: the `.env` file <U>must</u> also be inside these folder `/crawler`, `/database`, `/main`
 
 **Where to get credentials:**
-- **OpenRouter API Key**: Sign up at https://openrouter.ai/
-- **Supabase**: Create a free project at https://supabase.com/
+- **OpenRouter API Key**: get api at https://openrouter.ai/ (choose free model if you're broke)
+- **Supabase**: Create project at https://supabase.com/
 
 ## ▶️ Running the Project
 
 You need to run **TWO servers** simultaneously:
 
-### Option A: Using Two Terminals (Recommended)
+### Option 1: Run them seperately
 
 #### Terminal 1 - Backend Server
 
@@ -75,8 +79,6 @@ python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 **Backend will run at:** http://localhost:8000
-- API Docs: http://localhost:8000/docs
-- Health Check: http://localhost:8000/health
 
 #### Terminal 2 - Frontend Server
 
@@ -90,31 +92,14 @@ npm run dev
 
 **Frontend will run at:** http://localhost:8080
 
-### Option B: Using PowerShell Script
+### Option 2: Use the run.ps1
 
-Create a file named `run.ps1` in the project root:
+Run the `run.ps1` in the **terminal**:
 
-```powershell
-# Start backend in new window
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload"
-
-# Wait a bit for backend to start
-Start-Sleep -Seconds 3
-
-# Start frontend in new window
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd front_end; npm run dev"
-
-Write-Host "✅ Both servers starting..."
-Write-Host "Backend: http://localhost:8000"
-Write-Host "Frontend: http://localhost:8080"
-```
-
-Then run:
-```bash
+```terminal
 .\run.ps1
 ```
 
-### Option C: Test Mode (No Credentials Required)
 
 If you don't have API credentials yet, you can run in test mode:
 
@@ -137,136 +122,13 @@ Once both servers are running:
 2. **Start chatting** with the shopping assistant
 3. **Ask for products** like "Find me running shoes under $100"
 
+
+**Note**: The code will <u>find/scrape</u> **data online** if the data is not found in your **supabase** database so don't expect much
+
 ## 🛑 Stopping the Servers
 
-Press `Ctrl + C` in each terminal window to stop the servers.
+Press `Ctrl + C` in each terminal window to stop the servers or close it.
 
-## 🔍 Verifying Everything Works
 
-### Check Backend Health
 
-```bash
-curl http://localhost:8000/health
-```
-
-Should return:
-```json
-{
-  "status": "healthy",
-  "timestamp": "2025-11-05T..."
-}
-```
-
-### Check Frontend
-
-Open http://localhost:8080 - you should see the chat interface.
-
-### Test API Integration
-
-```bash
-curl -X POST http://localhost:8000/chat \
-  -H "Content-Type: application/json" \
-  -d "{\"message\": \"Hello\", \"session_id\": \"test123\"}"
-```
-
-## 📁 Project Structure
-
-```
-Shopping/
-├── api.py                 # Main FastAPI backend
-├── api_test.py           # Test backend (no credentials needed)
-├── .env                  # Your credentials (DO NOT COMMIT)
-├── requirements.txt      # Python dependencies
-├── front_end/
-│   ├── package.json     # Frontend dependencies
-│   ├── src/
-│   │   └── pages/
-│   │       └── Index.tsx # Main chat interface
-│   └── ...
-├── main/
-│   └── main.py          # Core AI logic
-├── database/
-│   └── store_data.py    # Database operations
-└── ...
-```
-
-## 🐛 Troubleshooting
-
-### Backend Issues
-
-**Error: "No module named 'fastapi'"**
-```bash
-pip install -r requirements.txt
-```
-
-**Error: "Connection to Supabase failed"**
-- Check your `.env` file has correct credentials
-- Verify Supabase project is active
-
-**Port 8000 already in use**
-```bash
-# Use a different port
-python -m uvicorn api:app --port 8001 --reload
-```
-
-### Frontend Issues
-
-**Error: "npm: command not found"**
-- Install Node.js from https://nodejs.org/
-
-**Port 8080 already in use**
-- The dev server will automatically try port 8081
-
-**Error: "Cannot connect to backend"**
-- Ensure backend is running on port 8000
-- Check `.env.local` has correct API URL
-
-### Database Issues
-
-**No products found**
-- The system will automatically scrape Amazon if database is empty
-- First query may take longer (30-60 seconds)
-
-**Supabase connection errors**
-- Verify credentials in `.env`
-- Check Supabase project status
-
-## 🔄 Development Workflow
-
-1. **Make changes** to backend: [`api.py`](api.py ) or files in [`main/`](main/ ), [`database/`](database/ ), etc.
-   - Backend auto-reloads (if using `--reload` flag)
-
-2. **Make changes** to frontend: Files in [`front_end/src/`](front_end/src/ )
-   - Frontend auto-reloads via Vite HMR
-
-3. **Test changes** in browser at http://localhost:8080
-
-## 📚 Additional Resources
-
-- **API Documentation**: http://localhost:8000/docs (when backend is running)
-- **Backend Code**: [`api.py`](api.py )
-- **Frontend Code**: [`front_end/src/pages/Index.tsx`](front_end/src/pages/Index.tsx )
-- **Main AI Logic**: [`main/main.py`](main/main.py )
-- **Integration Guide**: [`INTEGRATION_README.md`](INTEGRATION_README.md )
-
-## 🚀 Quick Start Summary
-
-```bash
-# 1. Install dependencies (first time only)
-pip install -r requirements.txt
-cd front_end && npm install && cd ..
-
-# 2. Configure .env file with your credentials
-
-# 3. Run backend (Terminal 1)
-python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload
-
-# 4. Run frontend (Terminal 2)
-cd front_end && npm run dev
-
-# 5. Open browser to http://localhost:8080
-```
-
----
-
-**Need help?** Check the troubleshooting section or review [`INTEGRATION_README.md`](INTEGRATION_README.md ) for more details.
+**Need help?** Just contact me through ntk241205@gmail.com or use AI.
