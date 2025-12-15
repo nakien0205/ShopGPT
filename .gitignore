@@ -1,11 +1,45 @@
-.idea/
-# Ignore environment files containing secrets
-*.env
+# Ignore apikeys
 .env
 
 # Python bytecode
-__pycache__/
-.messing_around/
+__pycache__
+/messing_around/
 
-.venv/
-.idea/
+# Frontend stuff (AI jobs, no clue)
+node_modules/
+/frontend/dist/
+/frontend/.vite/
+/frontend/build/
+.DS_Store
+
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Important shit
+/.venv/
+/venv/
+/env/
+/.idea/
+/experiments/
+/testing/
+/helper/
+
+# Must add dependency stuff
+!requirements.txt
+!package.json
+!package-lock.json
