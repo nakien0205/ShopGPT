@@ -134,7 +134,10 @@ def store_database(data):
         print(f'Error storing data!\nError type: {e}')
 
 
-def crawl(query, store=True):
+# query is an Amazon link
+def crawl(query=None, store=True):
+    if not query:
+        query = input("Amazon product link: ")
     links = asyncio.run(extract_links(query))
     products_data = asyncio.run(extract_amazon(links))
 
@@ -163,3 +166,5 @@ def create_data_frame(data, search):
         print(df.head())
     else:
         print("No data was scraped.")
+
+crawl()

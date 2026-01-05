@@ -1,6 +1,7 @@
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from openai import OpenAI
 
 # --- Load environment variables ---
 load_dotenv()
@@ -10,6 +11,14 @@ url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_CONTROL_KEY")
 email = os.environ.get("EMAIL")
 password = os.environ.get("PASSWORD")
+
+def generate_embedding(text):
+    client = OpenAI(api_key=os.environ.get("OPENAI"))
+    response = client.embeddings.create(
+        model="text-embedding-3-small",
+        input=text
+    )
+    return response.data[0].embedding
 
 # Lazy initialization - only create client when actually used
 _supabase_client = None
@@ -42,6 +51,7 @@ def store_data(asin, title, brand, price, discount, rating, rating_count, availa
             "product_description": product_description,
             "images": images,
             "return_policy": return_policy,
+            "embeddings": generate_embedding(product_description)
         }
 
         response = supabase.table("testing").insert(data).execute()
@@ -64,3 +74,8 @@ def retrieve_data():
     except Exception as e:
         print(f"Error retrieving chat history: {e}")
         return []
+    
+text = """
+ASUS Dual GeForce RTX 4060 EVO fuses dynamic thermal performance with broad compatibility. The advanced cooling solutions of flagship graphics cards – including two Axial-tech fans to maximize airflow to the sink – are integrated into the 22.5cm long 2.5-slot card, providing more power in less space. These enhancements make the ASUS Dual the perfect choice for players looking for weightless graphic performance in a compact design.
+"""
+print(generate_embedding(text))

@@ -1,3 +1,5 @@
+# The fucking schema works on GPU and CPU only
+
 link_schema = {
     "name": "Amazon_test",
     "baseSelector": "//div[@data-asin and @role]",

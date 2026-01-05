@@ -8,23 +8,20 @@ from ddgs import DDGS
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
 
-# Local imports (when running from main folder)
+# no fucking idea what this is (AI ideas because I cannot import the files)
 try:
     from tools import all_tools
     from finder import product_retriever
     from database.store_chat import store_message
     from crawler.crawl import crawl
 except ImportError:
-    # When imported from api.py (parent folder)
     from main.tools import all_tools
     from main.finder import product_retriever
     from database.store_chat import store_message
     from crawler.crawl import crawl
 
-# --- Load environment variables ---
 load_dotenv()
 
-# --- Pydantic Models ---
 class Message(BaseModel):
     content: str
     session_id: Optional[str] = None
@@ -35,17 +32,21 @@ class ChatResponse(BaseModel):
     products: Optional[List[Dict[str, Any]]] = None
     end_chat: bool = False
 
-# --- Configuration ---
+
 sys_prompt = """
 You are a helpful shopping assistant. 
 When discussing products, use the get_product_data tool to retrieve accurate product information.
-If the user clearly wants to end the conversation, respond exactly with the token END_CHAT.
 """
 
-# --- Session Storage ---
+sys_prompt_test = """
+You are a helpful shopping assistant. 
+When discussing ecommerce products, use the get_product_data tool to retrieve accurate product information.
+When discussing other things, use the search_web tool to get additional and updated data from the web because your knowledge might be outdated
+"""
+
+# Create chat session
 sessions: Dict[str, List[Dict]] = {}
 
-# --- Client Factory ---
 def create_client() -> OpenAI:
     """Create and return OpenAI client configured for OpenRouter."""
     return OpenAI(
@@ -230,46 +231,24 @@ def process_chat(
             message=text
         )
 
-# --- CLI Entry Point ---
-def run_cli():
-    """Run the chatbot in CLI mode."""
+def main():
     client = create_client()
     model_name = get_model()
     session_id = create_session_id()
     
-    print("ShopGPT - Shopping Assistant")
-    print("Type 'quit' to exit")
-    print("-" * 40)
-    
     while True:
-        try:
-            user_text = input("You: ").strip()
-            
-            if user_text.lower() in ['quit', 'exit', 'bye']:
-                print("Goodbye!")
-                break
-            
-            if not user_text:
-                continue
-            
-            response = process_chat(client, model_name, user_text, session_id)
-            print(f"Assistant: {response.message}")
-            
-            if response.products:
-                print(f"\n[Found {len(response.products)} products]")
-                for i, prod in enumerate(response.products[:3], 1):
-                    print(f"  {i}. {prod.get('title', 'N/A')[:60]}... - {prod.get('price', 'N/A')}")
-            
-            print("-" * 40)
-            
-            if response.end_chat:
-                break
+        user_text = input("You: ").strip()
+        
+        response = process_chat(client, model_name, user_text, session_id)
+        print(f"Assistant: {response.message}")
+        
+        if response.products:
+            print(f"\n[Found {len(response.products)} products]")
+            for i, prod in enumerate(response.products[:3], 1):
+                print(f"  {i}. {prod.get('title', 'N/A')[:60]}... - {prod.get('price', 'N/A')}")
+        
+        print("-" * 70)
                 
-        except KeyboardInterrupt:
-            print("\nGoodbye!")
-            break
-        except Exception as e:
-            print(f"Error: {e}")
 
-if __name__ == "__main__":
-    run_cli()
+# if __name__ == "__main__":
+#     main()
