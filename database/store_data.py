@@ -1,7 +1,7 @@
 import os
-from supabase import create_client, Client
+from supabase import create_client
 from dotenv import load_dotenv
-from openai import OpenAI
+from sentence_transformers import SentenceTransformer
 
 # --- Load environment variables ---
 load_dotenv()
@@ -13,12 +13,9 @@ email = os.environ.get("EMAIL")
 password = os.environ.get("PASSWORD")
 
 def generate_embedding(text):
-    client = OpenAI(api_key=os.environ.get("OPENAI"))
-    response = client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text
-    )
-    return response.data[0].embedding
+    model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')
+
+    return model.encode(text)
 
 # Lazy initialization - only create client when actually used
 _supabase_client = None
@@ -51,7 +48,7 @@ def store_data(asin, title, brand, price, discount, rating, rating_count, availa
             "product_description": product_description,
             "images": images,
             "return_policy": return_policy,
-            "embeddings": generate_embedding(product_description)
+            "embeddings": generate_embedding(title + '\n' + product_description)
         }
 
         response = supabase.table("testing").insert(data).execute()

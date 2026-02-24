@@ -7,18 +7,10 @@ import uuid
 from ddgs import DDGS
 from typing import List, Optional, Dict, Any
 from pydantic import BaseModel
-
-# no fucking idea what this is (AI ideas because I cannot import the files)
-try:
-    from tools import all_tools
-    from finder import product_retriever
-    from database.store_chat import store_message
-    from crawler.crawl import crawl
-except ImportError:
-    from main.tools import all_tools
-    from main.finder import product_retriever
-    from database.store_chat import store_message
-    from crawler.crawl import crawl
+from tools import all_tools
+from finder import product_retriever
+from database.store_chat import store_message
+from crawler.crawl import crawl
 
 load_dotenv()
 
