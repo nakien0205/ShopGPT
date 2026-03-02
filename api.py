@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 # Import core logic from main
-from main.old_main import (
+from main.main import (
     create_client,
     get_model,
     process_chat,
