@@ -5,7 +5,7 @@ from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 from crawl4ai import JsonXPathExtractionStrategy
 from crawler.schema import link_schema, data_schema
 import random
-from database.store_data import store_data
+from database.Supabase.store_data import store_data
 from utils import *
 
 page_num = 1

@@ -3,14 +3,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 # Import core logic from main
-from main.main import (
+from main.old_main import (
     create_client,
     get_model,
     process_chat,
     Message,
     ChatResponse,
 )
-from database.store_chat import retrieve_chat_history
+from database.Supabase.store_chat import retrieve_chat_history
 
 # --- Initialize ---
 load_dotenv()
