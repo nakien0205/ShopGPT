@@ -1,134 +1,73 @@
-# 🚀 How to Run the Shopping Assistant
+# Welcome to your Lovable project
 
-This guide is created by **<u>AI</u>** and refined by me so if you have a hardtime understanding then ask AI to do it for you.
+## Project info
 
-## 📋 Prerequisites
+**URL**: https://lovable.dev/projects/a3bce5b3-3c2d-4a7f-b4cb-278346577007
 
-Before running the project, ensure you have:
+## How can I edit this code?
 
-- **Python 3.11+** installed
-- **Node.js 18+** and **npm** installed
-- **Git** (if cloning from repository)
+There are several ways of editing your application.
 
-## 🔧 Setup
+**Use Lovable**
 
-### 1. Install Backend Dependencies
+Simply visit the [Lovable Project](https://lovable.dev/projects/a3bce5b3-3c2d-4a7f-b4cb-278346577007) and start prompting.
 
-Open a terminal in the project root directory:
+Changes made via Lovable will be committed automatically to this repo.
 
-```bash
-# Install Python dependencies
-pip install -r requirements.txt
-```
+**Use your preferred IDE**
 
-### 2. Install Frontend Dependencies
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
 
-```bash
-# Navigate to frontend directory
-cd front_end
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
-# Install npm packages
-npm install
+Follow these steps:
 
-# Return to project root
-cd ..
-```
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
 
-### 3. Configure Environment Variables
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
 
-Create a `.env` file in the project root nessasary credentials are in **.env_example.txt:**
+# Step 3: Install the necessary dependencies.
+npm i
 
-```bash
-Please read the .env_example.txt file
-Then create a .env file
-```
-
-If you are too lazy then here is what the `.env` looks like:
-
-```bash
-# OpenRouter API Key
-API=sk-or-v1-something
-
-# Supabase Configuration
-SUPABASE_URL=https://perhaps?.supabase.co
-SUPABASE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9?????
-SUPABASE_CONTROL_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9????  (This is the anon secret key)
-
-# Supabase Auth (optional)
-EMAIL=Meomeosir@gmail.com
-PASSWORD=yeah_right
-```
-
-**Note that**: the `.env` file <U>must</u> also be inside these folder `/crawler`, `/database`, `/main`
-
-**Where to get credentials:**
-- **OpenRouter API Key**: get api at https://openrouter.ai/ (choose free model if you're broke)
-- **Supabase**: Create project at https://supabase.com/
-
-## ▶️ Running the Project
-
-You need to run **TWO servers** simultaneously:
-
-### Option 1: Run them seperately
-
-#### Terminal 1 - Backend Server
-
-```bash
-# From project root
-python -m uvicorn api:app --host 0.0.0.0 --port 8000 --reload
-```
-
-**Backend will run at:** http://localhost:8000
-
-#### Terminal 2 - Frontend Server
-
-```bash
-# Navigate to frontend
-cd front_end
-
-# Start development server
+# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
 
-**Frontend will run at:** http://localhost:8080
+**Edit a file directly in GitHub**
 
-### Option 2: Use the run.ps1
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-Run the `run.ps1` in the **terminal**:
+**Use GitHub Codespaces**
 
-```terminal
-.\run.ps1
-```
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
+## What technologies are used for this project?
 
-If you don't have API credentials yet, you can run in test mode:
+This project is built with:
 
-#### Terminal 1 - Test Backend
-```bash
-python api_test.py
-```
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-#### Terminal 2 - Frontend
-```bash
-cd front_end
-npm run dev
-```
+## How can I deploy this project?
 
-## 🎯 Accessing the Application
+Simply open [Lovable](https://lovable.dev/projects/a3bce5b3-3c2d-4a7f-b4cb-278346577007) and click on Share -> Publish.
 
-Once both servers are running:
+## Can I connect a custom domain to my Lovable project?
 
-1. **Open your browser** to http://localhost:8080
-2. **Start chatting** with the shopping assistant
-3. **Ask for products** like "Find me running shoes under $100"
+Yes, you can!
 
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
-**Note**: The code will <u>find/scrape</u> **data online** if the data is not found in your **supabase** database so don't expect much
-
-## 🛑 Stopping the Servers
-
-Press `Ctrl + C` in each terminal window to stop the servers or close it.
-
-
-
-**Need help?** Just contact me through ntk241205@gmail.com or use AI.
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)

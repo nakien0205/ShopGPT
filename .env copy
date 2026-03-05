@@ -1,0 +1,4 @@
+VITE_SUPABASE_PROJECT_ID="zhnhqsjmicxkhzqvrjko"
+VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inpobmhxc2ptaWN4a2h6cXZyamtvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgwOTM4OTgsImV4cCI6MjA3MzY2OTg5OH0.e-snq26CQiD3GYzqPmv60tG13ZVDeBrMv3VNfS4HZxs"
+VITE_SUPABASE_URL="https://zhnhqsjmicxkhzqvrjko.supabase.co"
+VITE_API_BASE_URL="http://localhost:8000"
