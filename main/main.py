@@ -5,7 +5,7 @@ import json
 import inspect
 import uuid
 from ddgs import DDGS
-from typing import List, Optional, Dict
+from typing import Any, List, Optional, Dict
 from pydantic import BaseModel
 from tools import all_tools
 from database.Supabase.store_chat import store_message
@@ -20,9 +20,22 @@ class Message(BaseModel):
     session_id: Optional[str] = None
 
 
+class ProductData(BaseModel):
+    title: str
+    price: Optional[Any] = None
+    currency: Optional[str] = None
+    product_description: Optional[str] = None
+    info: Optional[str] = None
+    rating: Optional[Any] = None
+    rating_count: Optional[Any] = None
+    availability: Optional[str] = None
+    return_policy: Optional[str] = None
+
+
 class ChatResponse(BaseModel):
     session_id: str
     message: str
+    products: Optional[List[ProductData]] = None
     end_chat: bool = False
 
 
@@ -99,6 +112,36 @@ tool_functions = {
 }
 
 
+def extract_raw_products(search_query: str) -> List[ProductData]:
+    """Fetch raw product docs from MongoDB and map them to ProductData models."""
+    try:
+        raw = both(search_query)
+        if not raw:
+            return []
+        seen, result = set(), []
+        for item in raw:
+            doc = item.get('doc', {})
+            title = doc.get('title', '').strip()
+            key = title.lower()
+            if title and key not in seen:
+                seen.add(key)
+                result.append(ProductData(
+                    title=title,
+                    price=doc.get('price'),
+                    currency=doc.get('currency'),
+                    product_description=doc.get('product_description'),
+                    info=doc.get('info'),
+                    rating=doc.get('rating'),
+                    rating_count=doc.get('rating_count'),
+                    availability=doc.get('availability'),
+                    return_policy=doc.get('return_policy'),
+                ))
+        return result
+    except Exception as e:
+        print(f"Error extracting raw products: {e}")
+        return []
+
+
 def process_chat(
     client: OpenAI,
     model_name: str,
@@ -135,6 +178,8 @@ def process_chat(
         })
         store_message(session_id, "assistant", msg.content or "", tool_calls=tool_calls_data)
 
+        captured_products: List[ProductData] = []
+
         for tc in msg.tool_calls:
             fn_name = tc.function.name
             fn = tool_functions.get(fn_name)
@@ -151,6 +196,10 @@ def process_chat(
             }
 
             result = fn(**call_args)
+
+            # Capture structured product data when get_product_data is called
+            if fn_name == "get_product_data" and "search_query" in args:
+                captured_products = extract_raw_products(args["search_query"])
 
             # Tool result: pass string directly, serialize anything else
             tool_message = {
@@ -172,7 +221,8 @@ def process_chat(
 
         return ChatResponse(
             session_id=session_id,
-            message=final_msg
+            message=final_msg,
+            products=captured_products if captured_products else None,
         )
     else:
         # No tools used

@@ -1,82 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&family=Lora:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 222 47% 11%;
+    --background: 24 15% 6%;
+    --foreground: 40 30% 92%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card: 24 14% 10%;
+    --card-foreground: 40 30% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 24 14% 10%;
+    --popover-foreground: 40 30% 92%;
 
-    --primary: 193 95% 48%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 43 63% 56%;
+    --primary-foreground: 24 15% 8%;
 
-    --secondary: 210 17% 95%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 24 12% 14%;
+    --secondary-foreground: 40 20% 75%;
 
-    --muted: 210 17% 95%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 24 12% 14%;
+    --muted-foreground: 30 15% 50%;
 
-    --accent: 193 95% 48%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 43 63% 56%;
+    --accent-foreground: 24 15% 8%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 40 30% 92%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 193 95% 48%;
+    --border: 24 12% 18%;
+    --input: 24 12% 18%;
+    --ring: 43 63% 56%;
 
-    --radius: 0.75rem;
-
-    --gradient-chat: linear-gradient(135deg, hsl(193 95% 48% / 0.1), hsl(220 95% 55% / 0.1));
-    --gradient-product: linear-gradient(180deg, hsl(0 0% 100%), hsl(210 20% 98%));
-    --shadow-card: 0 4px 20px hsl(222 47% 11% / 0.08);
-    --shadow-elevated: 0 10px 40px hsl(222 47% 11% / 0.12);
-  }
-
-  .dark {
-    --background: 222 47% 8%;
-    --foreground: 210 40% 98%;
-
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 193 95% 55%;
-    --primary-foreground: 222 47% 11%;
-
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 193 95% 55%;
-    --accent-foreground: 222 47% 11%;
-
-    --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 193 95% 55%;
-
-    --gradient-chat: linear-gradient(135deg, hsl(193 95% 25% / 0.2), hsl(220 95% 30% / 0.2));
-    --gradient-product: linear-gradient(180deg, hsl(222 47% 11%), hsl(222 47% 9%));
-    --shadow-card: 0 4px 20px hsl(0 0% 0% / 0.3);
-    --shadow-elevated: 0 10px 40px hsl(0 0% 0% / 0.5);
+    --radius: 0.5rem;
   }
 }
 
@@ -85,33 +43,50 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
+  html {
+    color-scheme: dark;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "cv11", "ss01";
+    font-family: 'Lora', Georgia, serif;
+    background-color: #0E0C0A;
+  }
+
+  ::selection {
+    background: #D4A847;
+    color: #0E0C0A;
   }
 }
 
 @layer utilities {
-  .animate-slide-up {
-    animation: slide-up 0.3s ease-out;
+  .font-display {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+  .font-body {
+    font-family: 'Lora', Georgia, serif;
+  }
+  .font-mono-custom {
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
   }
 
-  @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
+  /* grain texture overlay */
+  .grain::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
   }
 
-  .gradient-chat {
-    background: var(--gradient-chat);
+  .gold-rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #D4A847 30%, #D4A847 70%, transparent 100%);
   }
 
-  .gradient-product {
-    background: var(--gradient-product);
+  .animate-pulse-dot {
+    animation: pulse-dot 1.4s ease-in-out infinite;
   }
 }
