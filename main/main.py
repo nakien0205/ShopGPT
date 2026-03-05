@@ -133,6 +133,25 @@ def extract_raw_products(search_query: str) -> List[ProductData]:
                 continue
             seen.add(key)
             try:
+                # Flatten images from [{"src": "url"}] to ["url"]
+                raw_images = doc.get('images')
+                flattened_images = None
+                if raw_images:
+                    if isinstance(raw_images, list) and len(raw_images) > 0:
+                        flattened_images = []
+                        for img in raw_images:
+                            # Handle dict format: {"src": "url"}
+                            if isinstance(img, dict) and 'src' in img:
+                                url = img['src']
+                                if url and isinstance(url, str) and url.strip():
+                                    flattened_images.append(url.strip())
+                            # Handle string format: "url"
+                            elif isinstance(img, str) and img.strip():
+                                flattened_images.append(img.strip())
+                        # If no valid images found, set to None
+                        if not flattened_images:
+                            flattened_images = None
+
                 result.append(ProductData(
                     title=title,
                     price=doc.get('price'),
@@ -145,7 +164,7 @@ def extract_raw_products(search_query: str) -> List[ProductData]:
                     info=doc.get('info'),
                     product_description=doc.get('product_description'),
                     return_policy=doc.get('return_policy'),
-                    images=doc.get('images'),
+                    images=flattened_images,
                 ))
             except Exception as item_err:
                 print(f"[extract_raw_products] Skipping product '{title}' due to validation error: {type(item_err).__name__}: {item_err}")
