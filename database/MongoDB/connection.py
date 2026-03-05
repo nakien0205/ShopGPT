@@ -8,7 +8,7 @@ load_dotenv('D:\Python\Projects\ShopGPT\.env')
 
 CONNECTION_STRING = os.environ.get("CONNECTION_STRING")
 
-all_fields = ["title", "product_description", 'availability', 'currency', 'info', 'price', 'rating', 'rating_count', 'return_policy']
+all_fields = ["title", "product_description", 'availability', 'currency', 'info', 'price', 'rating', 'rating_count', 'return_policy', 'discount', 'brand', 'images']
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 

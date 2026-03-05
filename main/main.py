@@ -23,13 +23,16 @@ class Message(BaseModel):
 class ProductData(BaseModel):
     title: str
     price: Optional[Any] = None
+    discount: Optional[int] = None
     currency: Optional[str] = None
+    brand: Optional[str] = None
     product_description: Optional[str] = None
     info: Optional[str] = None
     rating: Optional[Any] = None
     rating_count: Optional[Any] = None
     availability: Optional[str] = None
     return_policy: Optional[str] = None
+    images: Optional[List[str]] = None
 
 
 class ChatResponse(BaseModel):
@@ -98,12 +101,15 @@ def get_product_data_tool(search_query: str):
     try:
         products_data = both(search_query)
         if not products_data:
-            return "No products found for the given query."
+            return f"No products found in MongoDB for query: '{search_query}'."
         data = get_product_data(products_data)
         return data
+    except ConnectionError as e:
+        print(f"[get_product_data_tool] MongoDB connection error for query '{search_query}': {e}")
+        return f"Database connection failed while searching for '{search_query}': {e}"
     except Exception as e:
-        print(f"Error in get_product_data_tool: {e}")
-        return "An error occurred while retrieving product data."
+        print(f"[get_product_data_tool] Unexpected error for query '{search_query}': {type(e).__name__}: {e}")
+        return f"Error retrieving product data for '{search_query}': {type(e).__name__}: {e}"
 
 
 tool_functions = {
@@ -123,22 +129,32 @@ def extract_raw_products(search_query: str) -> List[ProductData]:
             doc = item.get('doc', {})
             title = doc.get('title', '').strip()
             key = title.lower()
-            if title and key not in seen:
-                seen.add(key)
+            if not title or key in seen:
+                continue
+            seen.add(key)
+            try:
                 result.append(ProductData(
                     title=title,
                     price=doc.get('price'),
+                    discount=doc.get('discount'),
                     currency=doc.get('currency'),
-                    product_description=doc.get('product_description'),
-                    info=doc.get('info'),
+                    brand=doc.get('brand'),
                     rating=doc.get('rating'),
                     rating_count=doc.get('rating_count'),
                     availability=doc.get('availability'),
+                    info=doc.get('info'),
+                    product_description=doc.get('product_description'),
                     return_policy=doc.get('return_policy'),
+                    images=doc.get('images'),
                 ))
+            except Exception as item_err:
+                print(f"[extract_raw_products] Skipping product '{title}' due to validation error: {type(item_err).__name__}: {item_err}")
         return result
+    except ConnectionError as e:
+        print(f"[extract_raw_products] MongoDB connection error for query '{search_query}': {e}")
+        return []
     except Exception as e:
-        print(f"Error extracting raw products: {e}")
+        print(f"[extract_raw_products] Unexpected error for query '{search_query}': {type(e).__name__}: {e}")
         return []
 
 
@@ -160,12 +176,16 @@ def process_chat(
     store_message(session_id, "user", user_message)
 
     # Get AI response
-    first = client.chat.completions.create(
-        model=model_name,
-        messages=chat_history,
-        tools=all_tools,
-        tool_choice="auto"
-    )
+    try:
+        first = client.chat.completions.create(
+            model=model_name,
+            messages=chat_history,
+            tools=all_tools,
+            tool_choice="auto"
+        )
+    except Exception as e:
+        raise RuntimeError(f"LLM API call failed (model='{model_name}'): {type(e).__name__}: {e}") from e
+
     msg = first.choices[0].message
 
     # Handle tool calls
@@ -185,9 +205,15 @@ def process_chat(
             fn = tool_functions.get(fn_name)
 
             if not fn:
+                print(f"[process_chat] Unknown tool called by LLM: '{fn_name}'")
                 continue
 
-            args = json.loads(tc.function.arguments or "{}")
+            try:
+                args = json.loads(tc.function.arguments or "{}")
+            except json.JSONDecodeError as e:
+                print(f"[process_chat] Failed to parse arguments for tool '{fn_name}': {e}")
+                continue
+
             sig = inspect.signature(fn)
             call_args = {
                 k: args[k] if k in args else v.default
@@ -195,7 +221,11 @@ def process_chat(
                 if k in args or v.default is not inspect._empty
             }
 
-            result = fn(**call_args)
+            try:
+                result = fn(**call_args)
+            except Exception as e:
+                print(f"[process_chat] Tool '{fn_name}' raised an error: {type(e).__name__}: {e}")
+                result = f"Tool '{fn_name}' failed: {type(e).__name__}: {e}"
 
             # Capture structured product data when get_product_data is called
             if fn_name == "get_product_data" and "search_query" in args:
@@ -211,10 +241,14 @@ def process_chat(
             chat_history.append(tool_message)
 
         # Get final response after tool calls
-        followup = client.chat.completions.create(
-            model=model_name,
-            messages=chat_history
-        )
+        try:
+            followup = client.chat.completions.create(
+                model=model_name,
+                messages=chat_history
+            )
+        except Exception as e:
+            raise RuntimeError(f"LLM follow-up call failed after tool use (model='{model_name}'): {type(e).__name__}: {e}") from e
+
         final_msg = followup.choices[0].message.content or ""
         chat_history.append({"role": "assistant", "content": final_msg})
         store_message(session_id, "assistant", final_msg)

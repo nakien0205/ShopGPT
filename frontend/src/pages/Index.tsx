@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Sparkles, LogOut } from "lucide-react";
-import { ChatMessage } from "@/components/ChatMessage";
+import { ShoppingBag, Sparkles } from "lucide-react";
 import { ChatInput } from "@/components/ChatInput";
 import { ProductCard, ProductData } from "@/components/ProductCard";
 import { ProductModal } from "@/components/ProductModal";
@@ -17,34 +16,6 @@ interface Message {
   content: string;
   products?: ProductData[];
 }
-
-const TypingIndicator = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0 }}
-    className="flex gap-4 px-6 py-5"
-  >
-    <div className="w-8 h-8 rounded-full border border-[#2E2A25] bg-[#1A1714] flex items-center justify-center">
-      <ShoppingBag className="w-4 h-4 text-[#D4A847]" />
-    </div>
-    <div className="flex flex-col gap-1">
-      <span className="text-[10px] uppercase tracking-[0.15em] text-[#8A8070] font-mono-custom">shopgpt</span>
-      <div className="flex items-center gap-2 px-4 py-3 rounded-2xl rounded-bl-sm border border-[#2E2A25] bg-[#1A1714]">
-        {[0, 1, 2].map((i) => (
-          <span
-            key={i}
-            className="w-1.5 h-1.5 rounded-full bg-[#D4A847]"
-            style={{
-              animation: "pulse-dot 1.4s ease-in-out infinite",
-              animationDelay: `${i * 0.22}s`,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  </motion.div>
-);
 
 const Index = () => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -102,74 +73,77 @@ const Index = () => {
   const isEmpty = messages.length === 0 && !isLoading;
 
   return (
-    <div className="flex flex-col h-screen" style={{ background: "#0E0C0A" }}>
+    <div className="flex flex-col h-screen bg-background">
       {/* Header */}
-      <header
-        className="flex items-center justify-between px-6 py-4 border-b border-[#2E2A25] flex-shrink-0"
-        style={{ background: "#0E0C0A" }}
-      >
-        <div className="flex items-center gap-3">
-          <ShoppingBag className="w-5 h-5 text-[#D4A847]" />
-          <h1 className="font-display text-xl font-semibold text-[#F5F0E8] tracking-wide">
-            Shop<span className="text-[#D4A847]">GPT</span>
-          </h1>
+      <header className="flex items-center gap-3 px-6 py-4 border-b border-border bg-card">
+        <div className="p-2 rounded-lg bg-primary/10">
+          <ShoppingBag className="text-primary" size={22} />
         </div>
-        <button
-          onClick={() => navigate("/")}
-          className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] text-[#8A8070] hover:text-[#D4A847] transition-colors font-mono-custom"
-        >
-          <LogOut className="w-3.5 h-3.5" />
-          Exit
-        </button>
+        <h1 className="font-display text-xl font-bold text-foreground">ShopGPT</h1>
       </header>
 
       {/* Chat area */}
       <div className="flex-1 overflow-y-auto">
         {isEmpty ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: "easeOut" }}
-            className="flex flex-col items-center justify-center h-full gap-5 px-6 text-center"
-          >
-            <div className="w-14 h-14 rounded-2xl border border-[#D4A847]/30 bg-[#D4A847]/5 flex items-center justify-center">
-              <Sparkles className="w-7 h-7 text-[#D4A847]" />
+          <div className="flex flex-col items-center justify-center h-full gap-4 px-4">
+            <div className="p-4 rounded-2xl bg-accent">
+              <Sparkles className="text-accent-foreground" size={40} />
             </div>
-            <div>
-              <h2 className="font-display text-3xl md:text-4xl font-semibold text-[#F5F0E8] leading-tight">
-                What are you shopping for?
-              </h2>
-              <p className="mt-2 text-sm text-[#8A8070] font-mono-custom max-w-sm mx-auto">
-                Describe any product and I'll find the best options for you.
-              </p>
-            </div>
-            <div className="gold-rule w-48" />
-          </motion.div>
+            <h2 className="font-display text-2xl md:text-3xl font-bold text-foreground text-center">
+              What are you shopping for?
+            </h2>
+            <p className="text-muted-foreground text-center max-w-md">
+              Describe any product and I'll find the top options across the web for you.
+            </p>
+          </div>
         ) : (
-          <div className="max-w-3xl mx-auto py-4">
+          <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
             <AnimatePresence>
               {messages.map((msg) => (
-                <div key={msg.id}>
-                  <ChatMessage role={msg.role} content={msg.content} />
-                  {msg.products && msg.products.length > 0 && (
-                    <div className="px-6 pb-4 space-y-2">
-                      {msg.products.map((product, i) => (
-                        <ProductCard
-                          key={`${product.title}-${i}`}
-                          product={product}
-                          index={i}
-                          onClick={() => setSelectedProduct(product)}
-                        />
-                      ))}
+                <motion.div
+                  key={msg.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  {msg.role === "user" ? (
+                    <div className="max-w-[80%] px-4 py-3 rounded-2xl rounded-br-md bg-chat-user text-chat-user-foreground font-body text-sm">
+                      {msg.content}
+                    </div>
+                  ) : (
+                    <div className="max-w-full w-full space-y-3">
+                      <p className="text-sm text-chat-ai-foreground bg-chat-ai px-4 py-3 rounded-2xl rounded-bl-md inline-block">
+                        {msg.content}
+                      </p>
+                      {msg.products && msg.products.length > 0 && (
+                        <div className="grid gap-3 mt-3">
+                          {msg.products.map((product, i) => (
+                            <ProductCard
+                              key={`${product.title}-${i}`}
+                              product={product}
+                              index={i}
+                              onClick={() => setSelectedProduct(product)}
+                            />
+                          ))}
+                        </div>
+                      )}
                     </div>
                   )}
-                </div>
+                </motion.div>
               ))}
             </AnimatePresence>
 
-            <AnimatePresence>
-              {isLoading && <TypingIndicator />}
-            </AnimatePresence>
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex gap-1.5 px-4 py-3 bg-chat-ai rounded-2xl rounded-bl-md w-fit"
+              >
+                <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:0ms]" />
+                <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:150ms]" />
+                <span className="w-2 h-2 rounded-full bg-muted-foreground animate-bounce [animation-delay:300ms]" />
+              </motion.div>
+            )}
 
             <div ref={bottomRef} />
           </div>
@@ -177,7 +151,7 @@ const Index = () => {
       </div>
 
       {/* Input bar */}
-      <div className="border-t border-[#2E2A25] px-6 py-4 flex-shrink-0" style={{ background: "#0E0C0A" }}>
+      <div className="border-t border-border bg-card px-4 py-4">
         <div className="max-w-3xl mx-auto">
           <ChatInput onSend={handleSendMessage} disabled={isLoading} />
         </div>

@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
+import os
 
 load_dotenv('D:\Python\Projects\ShopGPT\.env')
 

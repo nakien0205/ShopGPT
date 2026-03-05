@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=JetBrains+Mono:wght@400;500&family=Lora:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,35 +6,101 @@
 
 @layer base {
   :root {
-    --background: 24 15% 6%;
-    --foreground: 40 30% 92%;
+    --background: 220 20% 97%;
+    --foreground: 220 25% 10%;
 
-    --card: 24 14% 10%;
-    --card-foreground: 40 30% 92%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 25% 10%;
 
-    --popover: 24 14% 10%;
-    --popover-foreground: 40 30% 92%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 25% 10%;
 
-    --primary: 43 63% 56%;
-    --primary-foreground: 24 15% 8%;
+    --primary: 250 65% 55%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 24 12% 14%;
-    --secondary-foreground: 40 20% 75%;
+    --secondary: 220 15% 92%;
+    --secondary-foreground: 220 25% 10%;
 
-    --muted: 24 12% 14%;
-    --muted-foreground: 30 15% 50%;
+    --muted: 220 15% 94%;
+    --muted-foreground: 220 10% 50%;
 
-    --accent: 43 63% 56%;
-    --accent-foreground: 24 15% 8%;
+    --accent: 250 65% 95%;
+    --accent-foreground: 250 65% 40%;
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 40 30% 92%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
 
-    --border: 24 12% 18%;
-    --input: 24 12% 18%;
-    --ring: 43 63% 56%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 250 65% 55%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
+
+    --chat-bg: 220 20% 95%;
+    --chat-user: 250 65% 55%;
+    --chat-user-foreground: 0 0% 100%;
+    --chat-ai: 0 0% 100%;
+    --chat-ai-foreground: 220 25% 10%;
+
+    --product-shadow: 250 65% 55%;
+    --product-hover-shadow: 0 0% 0%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 225 25% 8%;
+    --foreground: 210 40% 95%;
+
+    --card: 225 20% 12%;
+    --card-foreground: 210 40% 95%;
+
+    --popover: 225 20% 12%;
+    --popover-foreground: 210 40% 95%;
+
+    --primary: 250 65% 60%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 225 20% 16%;
+    --secondary-foreground: 210 40% 95%;
+
+    --muted: 225 20% 16%;
+    --muted-foreground: 215 20% 60%;
+
+    --accent: 250 40% 20%;
+    --accent-foreground: 250 65% 80%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 225 20% 18%;
+    --input: 225 20% 18%;
+    --ring: 250 65% 60%;
+
+    --chat-bg: 225 25% 6%;
+    --chat-user: 250 65% 60%;
+    --chat-user-foreground: 0 0% 100%;
+    --chat-ai: 225 20% 14%;
+    --chat-ai-foreground: 210 40% 95%;
+
+    --product-shadow: 250 65% 60%;
+    --product-hover-shadow: 0 0% 0%;
+
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -42,51 +108,7 @@
   * {
     @apply border-border;
   }
-
-  html {
-    color-scheme: dark;
-  }
-
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Lora', Georgia, serif;
-    background-color: #0E0C0A;
-  }
-
-  ::selection {
-    background: #D4A847;
-    color: #0E0C0A;
-  }
-}
-
-@layer utilities {
-  .font-display {
-    font-family: 'Cormorant Garamond', Georgia, serif;
-  }
-  .font-body {
-    font-family: 'Lora', Georgia, serif;
-  }
-  .font-mono-custom {
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
-  }
-
-  /* grain texture overlay */
-  .grain::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 9999;
-    opacity: 0.35;
-  }
-
-  .gold-rule {
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, #D4A847 30%, #D4A847 70%, transparent 100%);
-  }
-
-  .animate-pulse-dot {
-    animation: pulse-dot 1.4s ease-in-out infinite;
+    @apply bg-background text-foreground font-body antialiased;
   }
 }

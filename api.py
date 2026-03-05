@@ -40,6 +40,8 @@ app.add_middleware(
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(message: Message):
     """Handle chat messages and return responses with products."""
+    if not message.content.strip():
+        raise HTTPException(status_code=422, detail="Message content cannot be empty.")
     try:
         response = process_chat(
             client=client,
@@ -48,8 +50,14 @@ async def chat(message: Message):
             session_id=message.session_id
         )
         return response
+    except RuntimeError as e:
+        # Raised by process_chat for LLM API failures — already has context
+        raise HTTPException(status_code=502, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Unexpected error in /api/chat: {type(e).__name__}: {e}"
+        )
 
 
 @app.get("/api/history/{session_id}")
@@ -59,7 +67,10 @@ async def get_history(session_id: str):
         history = retrieve_chat_history(session_id)
         return {"history": history}
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to retrieve history for session '{session_id}': {type(e).__name__}: {e}"
+        )
 
 
 @app.get("/api/health")
