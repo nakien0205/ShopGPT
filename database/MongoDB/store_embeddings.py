@@ -1,7 +1,10 @@
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
+from dotenv import load_dotenv
 
-CONNECTION_STRING = "mongodb+srv://admin:Kiendien0205@shopping.ngrztip.mongodb.net/"
+load_dotenv('D:\Python\Projects\ShopGPT\.env')
+
+CONNECTION_STRING = os.environ.get("CONNECTION_STRING")
 
 client = MongoClient(CONNECTION_STRING)
 db = client['shopping']
