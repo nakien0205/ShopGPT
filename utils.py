@@ -57,22 +57,37 @@ def parse_rating_count(rating_count_str):
 
 
 def increase_resolution(images: list):
+    """
+    Increase image resolution by removing Amazon's size suffix patterns.
+    Accepts images in dict format [{"src": "url"}] or string format ["url"]
+    and returns a flat list of URL strings ["url"].
+    """
     try:
+        result_urls = []
         for image in images:
-            if image.get('src'):
+            url = None
+            # Handle dict format: {"src": "url"}
+            if isinstance(image, dict) and 'src' in image:
                 url = image['src']
+            # Handle string format: "url"
+            elif isinstance(image, str):
+                url = image
 
+            if url:
                 # Remove standard Amazon image size suffix pattern (_AC_US40_)
                 if '_AC_' in url:
                     parts = url.split('._')
                     if len(parts) >= 2:
                         base_url = parts[0]
                         extension = parts[-1].split('_')[-1]
-                        image['src'] = f"{base_url}{extension}"
+                        url = f"{base_url}{extension}"
 
-    except TypeError:
-        pass
-    return images
+                result_urls.append(url)
+
+        return result_urls
+    except (TypeError, AttributeError) as e:
+        print(f"[increase_resolution] Error processing images: {e}")
+        return []
 
 
 # ============================================================================
