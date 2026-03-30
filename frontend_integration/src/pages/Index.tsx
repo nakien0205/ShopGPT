@@ -3,6 +3,9 @@ import { Send, ShoppingBag, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import ProductCard from "@/components/ProductCard";
 import ProductModal from "@/components/ProductModal";
+import CartSheet from "@/components/CartSheet";
+import HeaderMenu from "@/components/HeaderMenu";
+import HeaderNavLink from "@/components/HeaderNavLink";
 import { Product, productSets } from "@/data/products";
 
 interface Message {
@@ -58,11 +61,18 @@ const Index = () => {
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
-      <header className="flex items-center gap-3 px-6 py-4 border-b border-border bg-card">
-        <div className="p-2 rounded-lg bg-primary/10">
-          <ShoppingBag className="text-primary" size={22} />
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border bg-card">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-lg bg-primary/10">
+            <ShoppingBag className="text-primary" size={22} />
+          </div>
+          <h1 className="font-display text-xl font-bold text-foreground">ShopAI</h1>
         </div>
-        <h1 className="font-display text-xl font-bold text-foreground">ShopAI</h1>
+        <div className="flex items-center gap-2">
+          <HeaderNavLink to="/home" label="Home" />
+          <CartSheet />
+          <HeaderMenu />
+        </div>
       </header>
 
       {/* Chat area */}

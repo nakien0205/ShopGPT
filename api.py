@@ -1,12 +1,16 @@
+import asyncio
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 
 # Import core logic from main
 from main.main import (
     create_client,
+    create_async_client,
     get_model,
     process_chat,
+    stream_chat,
     Message,
     ChatResponse,
 )
@@ -16,6 +20,7 @@ from database.Supabase.store_chat import retrieve_chat_history
 load_dotenv()
 
 client = create_client()
+async_client = create_async_client()
 model_name = get_model()
 
 app = FastAPI(title="ShopGPT API")
@@ -39,25 +44,56 @@ app.add_middleware(
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(message: Message):
-    """Handle chat messages and return responses with products."""
+    """Handle chat messages and return responses with products (non-streaming)."""
     if not message.content.strip():
         raise HTTPException(status_code=422, detail="Message content cannot be empty.")
     try:
-        response = process_chat(
-            client=client,
-            model_name=model_name,
-            user_message=message.content,
-            session_id=message.session_id
+        # Run the synchronous process_chat in a thread so the event loop is free
+        response = await asyncio.to_thread(
+            process_chat,
+            client,
+            model_name,
+            message.content,
+            message.session_id,
         )
         return response
     except RuntimeError as e:
-        # Raised by process_chat for LLM API failures — already has context
         raise HTTPException(status_code=502, detail=str(e))
     except Exception as e:
         raise HTTPException(
             status_code=500,
             detail=f"Unexpected error in /api/chat: {type(e).__name__}: {e}"
         )
+
+
+@app.post("/api/chat/stream")
+async def chat_stream(message: Message):
+    """
+    Handle chat messages and return a Server-Sent Events (SSE) stream.
+
+    Event types:
+      {"type": "meta",  "session_id": "...", "products": [...]}
+      {"type": "token", "content": "..."}
+      {"type": "error", "content": "..."}
+      {"type": "done"}
+    """
+    if not message.content.strip():
+        raise HTTPException(status_code=422, detail="Message content cannot be empty.")
+
+    return StreamingResponse(
+        stream_chat(
+            sync_client=client,
+            async_client=async_client,
+            model_name=model_name,
+            user_message=message.content,
+            session_id=message.session_id,
+        ),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",   # disable nginx buffering if behind proxy
+        },
+    )
 
 
 @app.get("/api/history/{session_id}")

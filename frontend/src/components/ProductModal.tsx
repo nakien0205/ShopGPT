@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { X, ExternalLink, ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
 import { ProductData, getDiscountColor } from "./ProductCard";
+import { useCart } from "@/context/CartContext";
+import { Product } from "@/data/products";
+import { toast } from "sonner";
 
 interface ProductModalProps {
   product: ProductData | null;
@@ -20,6 +23,7 @@ const Row = ({ label, value }: { label: string; value?: string | number | null }
 
 export const ProductModal = ({ product, onClose }: ProductModalProps) => {
   const [imgIdx, setImgIdx] = useState(0);
+  const { addToCart } = useCart();
 
   const handleClose = () => {
     setImgIdx(0);
@@ -201,17 +205,27 @@ export const ProductModal = ({ product, onClose }: ProductModalProps) => {
                     </div>
                   </div>
 
-                  {/* Buy Now button */}
-                  {product.link && (
-                    <a
-                      href={product.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-lg bg-primary text-primary-foreground py-3 px-6 font-display font-semibold transition-all hover:opacity-90"
-                    >
-                      Buy Now <ExternalLink size={16} />
-                    </a>
-                  )}
+                  {/* Action buttons */}
+                  <div className="mt-6 flex gap-3">
+                    {product.id !== undefined && (
+                      <button
+                        onClick={() => { addToCart(product as unknown as Product); toast.success(`${product.title} added to cart`); }}
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary text-secondary-foreground py-3 px-4 font-display font-semibold transition-all hover:opacity-80"
+                      >
+                        <ShoppingCart size={16} /> Add to Cart
+                      </button>
+                    )}
+                    {product.link && (
+                      <a
+                        href={product.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 px-4 font-display font-semibold transition-all hover:opacity-90"
+                      >
+                        Buy Now <ExternalLink size={16} />
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

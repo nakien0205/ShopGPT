@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { Product, getDiscountColor } from "@/data/products";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { X, ExternalLink, ChevronLeft, ChevronRight, Star, ShoppingCart } from "lucide-react";
+import { useCart } from "@/context/CartContext";
+import { toast } from "sonner";
 
 interface ProductModalProps {
   product: Product | null;
@@ -10,6 +12,7 @@ interface ProductModalProps {
 
 const ProductModal = ({ product, onClose }: ProductModalProps) => {
   const [imgIdx, setImgIdx] = useState(0);
+  const { addToCart } = useCart();
 
   const handleClose = () => {
     setImgIdx(0);
@@ -148,14 +151,25 @@ const ProductModal = ({ product, onClose }: ProductModalProps) => {
                     </div>
                   </div>
 
-                  <a
-                    href={product.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-6 inline-flex items-center justify-center gap-2 w-full rounded-lg bg-primary text-primary-foreground py-3 px-6 font-display font-semibold transition-all hover:opacity-90"
-                  >
-                    Buy Now <ExternalLink size={16} />
-                  </a>
+                  <div className="mt-6 flex gap-3">
+                    <button
+                      onClick={() => {
+                        addToCart(product);
+                        toast.success(`${product.title} added to cart`);
+                      }}
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary text-secondary-foreground py-3 px-4 font-display font-semibold transition-all hover:opacity-80"
+                    >
+                      <ShoppingCart size={16} /> Add to Cart
+                    </button>
+                    <a
+                      href={product.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 inline-flex items-center justify-center gap-2 rounded-lg bg-primary text-primary-foreground py-3 px-4 font-display font-semibold transition-all hover:opacity-90"
+                    >
+                      Buy Now <ExternalLink size={16} />
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

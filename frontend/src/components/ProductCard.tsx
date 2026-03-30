@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ShoppingBag } from "lucide-react";
 
 export interface ProductData {
+  id?: number;
   title: string;
   price?: string | number | null;
   currency?: string | null;

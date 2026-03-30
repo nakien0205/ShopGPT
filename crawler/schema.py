@@ -1,4 +1,4 @@
-# The fucking schema works on GPU and CPU only
+# The fucking schema works on electronics only
 
 link_schema = {
     "name": "Amazon_test",

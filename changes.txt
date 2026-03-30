@@ -1,0 +1,18 @@
+ bun.lock                         | 1199 ++++++++++++++++++++++++++++++++++++++
+ src/App.tsx                      |   24 +-
+ src/components/CartSheet.tsx     |   92 +++
+ src/components/HeaderMenu.tsx    |   56 ++
+ src/components/HeaderNavLink.tsx |   23 +
+ src/components/ProductModal.tsx  |   32 +-
+ src/context/CartContext.tsx      |   50 ++
+ src/pages/Home.tsx               |  204 +++++++
+ src/pages/Index.tsx              |   18 +-
+ tsconfig.app.json                |   46 +-
+ tsconfig.json                    |   28 +-
+ 11 files changed, 1718 insertions(+), 54 deletions(-)
+ create mode 100644 bun.lock
+ create mode 100644 src/components/CartSheet.tsx
+ create mode 100644 src/components/HeaderMenu.tsx
+ create mode 100644 src/components/HeaderNavLink.tsx
+ create mode 100644 src/context/CartContext.tsx
+ create mode 100644 src/pages/Home.tsx

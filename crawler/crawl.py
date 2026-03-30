@@ -135,7 +135,7 @@ def store_database(data):
 
 
 # query is an Amazon link
-def crawl(query=None, store=True):
+def crawl(query=None, store=False):
     if not query:
         query = input("Amazon product link: ")
     links = asyncio.run(extract_links(query))

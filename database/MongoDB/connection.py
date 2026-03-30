@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
+from functools import lru_cache
 import time
 from dotenv import load_dotenv
 import os
@@ -11,6 +12,17 @@ CONNECTION_STRING = os.environ.get("CONNECTION_STRING")
 all_fields = ["title", "product_description", 'availability', 'currency', 'info', 'price', 'rating', 'rating_count', 'return_policy', 'discount', 'brand', 'images']
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
+
+
+@lru_cache(maxsize=512)
+def _encode(query_text: str) -> tuple:
+    """Return a cached embedding tuple for *query_text*.
+
+    Storing as a tuple lets lru_cache work (numpy arrays are not hashable).
+    Convert back to list before sending to MongoDB.
+    """
+    return tuple(model.encode(query_text).tolist())
+
 
 client = MongoClient(CONNECTION_STRING)
 # Target your specific database and collection
@@ -47,8 +59,8 @@ def search_products_lexical(query_text, limit=5):
 
 def search_products_vector(query_text, limit=5):
     """Vector search using embeddings"""
-    # Generate embedding for the query
-    query_embedding = model.encode(query_text).tolist()
+    # Generate embedding for the query (cached)
+    query_embedding = list(_encode(query_text))
     
     pipeline = [
         {
@@ -98,7 +110,7 @@ def both(query_text, limit=5):
     ]
     lexical_results = list(collection.aggregate(pipeline))
 
-    query_embedding = model.encode(query_text).tolist()
+    query_embedding = list(_encode(query_text))
     
     pipeline = [
         {
