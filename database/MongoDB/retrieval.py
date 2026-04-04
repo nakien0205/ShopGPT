@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 from sentence_transformers import SentenceTransformer
-from functools import lru_cache
 import time
 from dotenv import load_dotenv
 import os
@@ -13,8 +12,11 @@ all_fields = ["title", "product_description", 'availability', 'currency', 'info'
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
+client = MongoClient(CONNECTION_STRING)
+# Target your specific database and collection
+db = client['shopping']
+collection = db['testing']
 
-@lru_cache(maxsize=512)
 def _encode(query_text: str) -> tuple:
     """Return a cached embedding tuple for *query_text*.
 
@@ -22,12 +24,6 @@ def _encode(query_text: str) -> tuple:
     Convert back to list before sending to MongoDB.
     """
     return tuple(model.encode(query_text).tolist())
-
-
-client = MongoClient(CONNECTION_STRING)
-# Target your specific database and collection
-db = client['shopping']
-collection = db['testing']
 
 def search_products_lexical(query_text, limit=5):
     """Lexical search using text index"""

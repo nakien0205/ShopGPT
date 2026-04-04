@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from ddgs import DDGS
 from tools import all_tools
 from database.Supabase.store_chat import store_message
-from database.MongoDB.connection import both
+from database.MongoDB.retrieval import both
 from database.MongoDB.formated_output import get_product_data
 
 load_dotenv()
